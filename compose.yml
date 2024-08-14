@@ -13,16 +13,20 @@ services:
       - TZ=Asia/Tokyo
     ports:
       - '3306:3306'
+  
   app:
     build: ./docker/php
     container_name: app-container
     volumes:
       - ./docker/php/php.ini:/usr/local/etc/php/php.ini
-      - ./app/laravel:/var/www
+      - ./docroot:/var/www
     ports:
-      - '8080:80'
+      - '80:80'
     depends_on:
       - db
+  
+    tty: true
+    stdin_open: true
   phpmyadmin:
     build: ./docker/phpmyadmin
     container_name: phpmyadmin-container
@@ -34,6 +38,13 @@ services:
       - PMA_USER=root
       - PMA_PASSWORD=mysql
     ports:
-      - '4040:80'
+      - '38080:80'
     depends_on:
       - db
+  
+  mailcatcher:
+    image: schickling/mailcatcher
+    restart: always
+    ports:
+      - 11025:1025
+      - 11080:1080
